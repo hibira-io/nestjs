@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Order A-1042 · NestJS + Hibira example</title>
+<style>
+  :root {
+    --bg: #f7f4ef; --card: #ffffff; --ink: #1d1b19; --muted: #6f6a63; --line: #e8e2d9;
+    --accent: #e5484d; --accent-soft: #fde8e8; --ok: #2f9e6a; --ok-soft: #e3f4ea; --code: #f3efe8;
+  }
+  :root[data-theme="dark"] {
+    --bg: #161514; --card: #201f1d; --ink: #f2efe9; --muted: #a39d94; --line: #34312d;
+    --accent: #ff6369; --accent-soft: #3b1f20; --ok: #4cc38a; --ok-soft: #173326; --code: #2a2825;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 Inter, "Noto Sans TC", system-ui, -apple-system, "Segoe UI", sans-serif; }
+  header { display: flex; align-items: center; gap: 16px; padding: 18px 28px; border-bottom: 1px solid var(--line); background: var(--card); }
+  header h1 { font-size: 18px; margin: 0; font-weight: 650; }
+  header .sub { color: var(--muted); font-size: 13px; }
+  .grow { flex: 1; }
+  .watchers { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 13px; }
+  .avatars { display: flex; }
+  .avatar { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; font-weight: 650; font-size: 13px; color: #fff; border: 2px solid var(--card); margin-left: -8px; position: relative; }
+  .avatar:first-child { margin-left: 0; }
+  .avatar .dot { position: absolute; right: -2px; bottom: -2px; width: 10px; height: 10px; border-radius: 50%; background: var(--ok); border: 2px solid var(--card); }
+  main { display: grid; grid-template-columns: 1.35fr 1fr; gap: 20px; padding: 24px 28px; max-width: 1240px; margin: 0 auto; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 20px 22px; }
+  .card h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 0 0 14px; font-weight: 600; }
+  .col { display: grid; gap: 20px; align-content: start; }
+  .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 6px 0 18px; }
+  .step { text-align: center; font-size: 13px; color: var(--muted); }
+  .step .bar { height: 6px; border-radius: 3px; background: var(--line); margin-bottom: 8px; transition: background .3s; }
+  .step.done .bar { background: var(--accent); }
+  .step.done { color: var(--ink); font-weight: 600; }
+  .status { display: flex; align-items: baseline; gap: 10px; }
+  .status b { font-size: 26px; }
+  .flash { animation: flash 1.2s ease-out; }
+  @keyframes flash { from { background: var(--accent-soft); } to { background: transparent; } }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+  button { font: inherit; font-size: 14px; border-radius: 9px; padding: 8px 14px; border: 1px solid var(--line); background: var(--card); color: var(--ink); cursor: pointer; }
+  button.primary { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+  .meta { color: var(--muted); font-size: 13px; margin-top: 10px; }
+  code { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12.5px; background: var(--code); padding: 1px 6px; border-radius: 5px; }
+  .answer { min-height: 92px; font-size: 15.5px; white-space: pre-wrap; }
+  .caret { display: inline-block; width: 8px; height: 17px; background: var(--accent); vertical-align: -3px; margin-left: 2px; animation: blink 1s steps(2) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+  .who { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 13px; margin-bottom: 8px; }
+  .chip { font-size: 12px; padding: 2px 8px; border-radius: 99px; background: var(--ok-soft); color: var(--ok); font-weight: 600; }
+  .log { display: grid; gap: 0; font-size: 13px; }
+  .log .item { display: grid; grid-template-columns: 116px 1fr auto; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--line); align-items: center; }
+  .log .item:last-child { border-bottom: 0; }
+  .log .name { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12px; color: var(--accent); font-weight: 600; }
+  .log .time { color: var(--muted); font-size: 12px; }
+  .empty { color: var(--muted); font-size: 13px; }
+  .conn { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); }
+  .conn i { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); }
+  .conn.on i { background: var(--ok); }
+  @media (max-width: 820px) { main { grid-template-columns: 1fr; padding: 16px; } header { padding: 14px 16px; flex-wrap: wrap; } .log .item { grid-template-columns: 1fr auto; row-gap: 2px; } .log .item > span:nth-child(2) { grid-column: 1 / -1; grid-row: 2; color: var(--muted); } }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1 data-t="title">Order A-1042</h1>
+    <div class="sub" data-t="subtitle">2 × ceramic mugs · ¥4,800</div>
+  </div>
+  <div class="grow"></div>
+  <div class="watchers"><span data-t="watching">Watching now</span><div class="avatars" id="avatars"></div></div>
+  <span class="conn" id="conn"><i></i><span id="connText">…</span></span>
+</header>
+<main>
+  <div class="col">
+    <section class="card" id="orderCard">
+      <h2 data-t="delivery">Delivery</h2>
+      <div class="status"><b id="status">—</b><span class="meta" id="updated"></span></div>
+      <div class="steps" id="steps"></div>
+      <div class="row" id="actions"></div>
+      <div class="meta" data-html="broadcastNote"></div>
+    </section>
+    <section class="card">
+      <h2 data-t="assistant">Assistant</h2>
+      <div class="who"><span class="chip">ai-stream</span><span data-t="streamNote">streamed with hibira.stream()</span></div>
+      <div class="answer" id="answer"><span class="empty" data-t="askHint">Ask where the parcel is.</span></div>
+      <div class="row"><button class="primary" id="ask" data-t="ask">Where is my parcel?</button></div>
+    </section>
+  </div>
+  <div class="col">
+    <section class="card" id="opsCard">
+      <h2 data-t="webhooks">Webhooks received</h2>
+      <div class="meta" data-html="webhookNote" style="margin:-6px 0 10px"></div>
+      <div class="log" id="log"><div class="empty" data-t="noWebhooks">Waiting for the first webhook…</div></div>
+    </section>
+  </div>
+</main>
+<script src="/pusher.js"></script>
+<script>
+const q = new URLSearchParams(location.search);
+const user = q.get('user') || 'ann';
+const lang = q.get('lang') === 'zh-TW' ? 'zh-TW' : 'en';
+document.documentElement.dataset.theme = q.get('theme') === 'dark' ? 'dark' : 'light';
+document.documentElement.lang = lang;
+const ORDER = 'A1042';
+const STEPS = ['placed', 'packed', 'shipped', 'delivered'];
+const T = {
+  en: {
+    title: 'Order A-1042', subtitle: '2 × ceramic mugs · ¥4,800', watching: 'Watching now', delivery: 'Delivery',
+    assistant: 'Assistant', streamNote: 'streamed with hibira.stream()', askHint: 'Ask where the parcel is.', ask: 'Where is my parcel?',
+    webhooks: 'Webhooks received', noWebhooks: 'Waiting for the first webhook…',
+    broadcastNote: 'Status changes come from <code>@Broadcast(\'private-orders.{id}\', \'order.updated\')</code> on the route.',
+    webhookNote: 'Verified by <code>/hibira/webhook</code>, handled by <code>@OnHibiraWebhook()</code>.',
+    steps: { placed: 'Placed', packed: 'Packed', shipped: 'Shipped', delivered: 'Delivered' },
+    mark: (s) => `Mark ${s.toLowerCase()}`, updated: (t) => `updated ${t}`, live: 'Live', off: 'Connecting',
+  },
+  'zh-TW': {
+    title: '訂單 A-1042', subtitle: '陶瓷馬克杯 × 2 · NT$1,080', watching: '正在查看', delivery: '配送進度',
+    assistant: '客服助理', streamNote: '由 hibira.stream() 即時串流', askHint: '問問包裹現在在哪裡。', ask: '我的包裹到哪了？',
+    webhooks: '收到的 Webhook', noWebhooks: '等待第一個 webhook…',
+    broadcastNote: '狀態變更來自路由上的 <code>@Broadcast(\'private-orders.{id}\', \'order.updated\')</code>。',
+    webhookNote: '由 <code>/hibira/webhook</code> 驗證簽章，<code>@OnHibiraWebhook()</code> 處理。',
+    steps: { placed: '已下單', packed: '已包裝', shipped: '已出貨', delivered: '已送達' },
+    mark: (s) => `標記為${s}`, updated: (t) => `${t} 更新`, live: '已連線', off: '連線中',
+  },
+}[lang];
+for (const el of document.querySelectorAll('[data-t]')) el.textContent = T[el.dataset.t];
+for (const el of document.querySelectorAll('[data-html]')) el.innerHTML = T[el.dataset.html];
+
+const COLORS = { ann: '#e5484d', bo: '#3e63dd', kei: '#2f9e6a' };
+const time = (ms) => new Date(ms).toLocaleTimeString(lang, { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+function renderStatus(status, at, flash) {
+  document.getElementById('status').textContent = T.steps[status];
+  document.getElementById('updated').textContent = at ? T.updated(time(at)) : '';
+  const i = STEPS.indexOf(status);
+  document.getElementById('steps').innerHTML = STEPS.map((s, j) => `<div class="step ${j <= i ? 'done' : ''}"><div class="bar"></div>${T.steps[s]}</div>`).join('');
+  const next = STEPS[i + 1];
+  document.getElementById('actions').innerHTML = next ? `<button class="primary" data-next="${next}">${T.mark(T.steps[next])}</button>` : '';
+  if (flash) { const c = document.getElementById('orderCard'); c.classList.remove('flash'); void c.offsetWidth; c.classList.add('flash'); }
+}
+renderStatus(q.get('status') || 'packed', null, false);
+
+const headers = { 'x-user': user };
+const pusherPromise = fetch('/config').then((r) => r.json()).then((cfg) => {
+  const pusher = new Pusher(cfg.key, {
+    ...cfg,
+    channelAuthorization: { endpoint: '/hibira/auth', transport: 'ajax', headers },
+  });
+  pusher.connection.bind('state_change', ({ current }) => {
+    const on = current === 'connected';
+    document.getElementById('conn').classList.toggle('on', on);
+    document.getElementById('connText').textContent = on ? T.live : T.off;
+  });
+  return pusher;
+});
+
+pusherPromise.then((pusher) => {
+  const order = pusher.subscribe(`private-orders.${ORDER}`);
+  order.bind('order.updated', (o) => renderStatus(o.status, o.at, true));
+  let answer = '';
+  order.bind('ai-stream', (e) => {
+    const box = document.getElementById('answer');
+    if (e.seq === 0 || (e.done && e.text)) answer = e.done && e.text ? e.text : '';
+    if (!e.done) answer += e.delta;
+    box.textContent = answer;
+    if (!e.done) box.insertAdjacentHTML('beforeend', '<span class="caret"></span>');
+  });
+
+  const room = pusher.subscribe(`presence-order.${ORDER}`);
+  const drawMembers = () => {
+    const list = [];
+    room.members.each((m) => list.push(m));
+    document.getElementById('avatars').innerHTML = list
+      .map((m) => `<div class="avatar" title="${m.info.name} · ${m.info.role}" style="background:${COLORS[m.id] || '#888'}">${m.info.name[0]}<span class="dot"></span></div>`)
+      .join('');
+  };
+  room.bind('pusher:subscription_succeeded', drawMembers);
+  room.bind('pusher:member_added', drawMembers);
+  room.bind('pusher:member_removed', drawMembers);
+
+  const ops = pusher.subscribe('private-ops');
+  ops.bind('pusher:subscription_error', () => (document.getElementById('opsCard').style.display = 'none'));
+  const log = document.getElementById('log');
+  ops.bind('webhook', (w) => {
+    if (log.querySelector('.empty')) log.innerHTML = '';
+    const who = w.user_id ? ` · ${w.user_id}` : '';
+    log.insertAdjacentHTML('afterbegin', `<div class="item"><span class="name">${w.name}</span><span>${w.channel}${who}</span><span class="time">${time(w.at)}</span></div>`);
+    while (log.children.length > 9) log.lastElementChild.remove();
+  });
+});
+
+document.addEventListener('click', async (ev) => {
+  const next = ev.target.closest('[data-next]')?.dataset.next;
+  if (next) {
+    const pusher = await pusherPromise;
+    await fetch(`/orders/${ORDER}/status`, { method: 'POST', headers: { ...headers, 'content-type': 'application/json', 'x-socket-id': pusher.connection.socket_id }, body: JSON.stringify({ status: next }) })
+      .then((r) => r.json())
+      .then((o) => renderStatus(o.status, o.at, false));
+  }
+  if (ev.target.id === 'ask') {
+    await fetch(`/orders/${ORDER}/explain`, { method: 'POST', headers: { ...headers, 'content-type': 'application/json' }, body: JSON.stringify({ lang }) });
+  }
+});
+</script>
+</body>
+</html>

@@ -3,3 +3,4 @@ dist/
 build/
 *.tgz
 .DS_Store
+build-example/

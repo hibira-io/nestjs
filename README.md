@@ -1,5 +1,9 @@
 # @hibira-io/nestjs
 
+![@hibira-io/nestjs](.github/cover.jpg)
+
+[![npm](https://img.shields.io/npm/v/@hibira-io/nestjs)](https://www.npmjs.com/package/@hibira-io/nestjs)
+
 [Hibira](https://hibira.io) realtime for [NestJS](https://nestjs.com).
 Hibira speaks the Pusher Channels protocol, so pusher-js, Laravel Echo and
 the mobile Pusher SDKs connect to it unchanged. This module is the server
@@ -23,6 +27,14 @@ side, written the Nest way:
   (Beams-compatible).
 
 Works with Nest 10, 11 and 12, on Express or Fastify.
+
+![The example app: order status from @Broadcast, people watching on a presence channel, a streamed answer and the webhook log](.github/example-en-desktop-light.png)
+
+| Dark mode | Phones (Traditional Chinese) |
+| --- | --- |
+| ![The example app in dark mode](.github/example-en-desktop-dark.png) | ![The example app on a phone, in Traditional Chinese](.github/example-zh-TW-mobile-dark.png) |
+
+The [example app](example/) is the page above: run it with `npm run example`.
 
 ## Install
 
@@ -291,6 +303,7 @@ Also `publishToInterests(interests, payload)` and `deleteUser(userId)`.
 npm test         # unit tests (Express and Fastify)
 npm run test:e2e # against a running server, see test/e2e/module.e2e.ts
 npm run build
+npm run example  # the example app, see example/README.md
 ```
 
 ## License
@@ -307,4 +320,4 @@ Laravel 的 `routes/channels.php`），模組會提供 pusher-js 與 Laravel Ech
 `rawBody: true`）；`@Broadcast()` 把路由回傳值推送到頻道並排除發送者；
 `hibira.stream()` 串流 LLM 輸出，前端用 @hibira-io/react / vue / nuxt 的
 `useStream()` 顯示；`requestApproval()` 請人核准；`HibiraPushService` 發送推播。
-支援 Nest 10、11、12，Express 與 Fastify。
+支援 Nest 10、11、12，Express 與 Fastify。`example/` 有一個可直接執行的即時訂單頁面範例。

@@ -21,6 +21,8 @@ jobs:
       - run: npm ci
       - run: npm test
       - run: npm run build
+      - name: Example compiles
+        run: npx tsc -p example/tsconfig.json --noEmit
       - name: Package contents
         run: npm pack --dry-run
 
