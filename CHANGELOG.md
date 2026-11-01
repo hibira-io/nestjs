@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- README: cover image and screenshots of the new example app (`npm run example`).
+
 ## 0.1.0
 
 - `HibiraModule.forRoot()` / `forRootAsync()`, configured from options or

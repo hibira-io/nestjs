@@ -52,7 +52,8 @@
     "pretest": "rm -rf build && tsc -p tsconfig.test.json",
     "test": "node --test build/test/*.test.js",
     "test:e2e": "rm -rf build && tsc -p tsconfig.test.json && node --test build/test/e2e/*.e2e.js",
-    "prepack": "npm run build"
+    "prepack": "npm run build",
+    "example": "tsc -p example/tsconfig.json && node build-example/example/app.js"
   },
   "dependencies": {
     "pusher": "^5.3.4"
