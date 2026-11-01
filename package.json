@@ -1,0 +1,82 @@
+{
+  "name": "@hibira-io/nestjs",
+  "version": "0.1.0",
+  "description": "NestJS module for Hibira (Pusher-compatible) realtime: publish events, authorize private and presence channels with decorators, receive signed webhooks, @Broadcast() route results, stream LLM text, ask people for approvals and send push notifications",
+  "keywords": [
+    "nestjs",
+    "nest",
+    "pusher",
+    "pusher-js",
+    "laravel-echo",
+    "websocket",
+    "realtime",
+    "broadcasting",
+    "webhooks",
+    "presence",
+    "push-notifications",
+    "ai",
+    "streaming",
+    "hibira"
+  ],
+  "homepage": "https://hibira.io",
+  "bugs": {
+    "url": "https://github.com/hibira-io/nestjs/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hibira-io/nestjs.git"
+  },
+  "license": "MIT",
+  "author": "Hibira (https://hibira.io)",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "rm -rf dist && tsc -p tsconfig.json",
+    "pretest": "rm -rf build && tsc -p tsconfig.test.json",
+    "test": "node --test build/test/*.test.js",
+    "test:e2e": "rm -rf build && tsc -p tsconfig.test.json && node --test build/test/e2e/*.e2e.js",
+    "prepack": "npm run build"
+  },
+  "dependencies": {
+    "pusher": "^5.3.4"
+  },
+  "peerDependencies": {
+    "@nestjs/common": "^10.0.0 || ^11.0.0 || ^12.0.0",
+    "@nestjs/core": "^10.0.0 || ^11.0.0 || ^12.0.0",
+    "reflect-metadata": ">=0.1.13",
+    "rxjs": "^7.0.0"
+  },
+  "devDependencies": {
+    "@nestjs/common": "^12.3.2",
+    "@nestjs/core": "^12.3.2",
+    "@nestjs/platform-express": "^12.3.2",
+    "@nestjs/platform-fastify": "^12.3.2",
+    "@nestjs/testing": "^12.3.2",
+    "@types/node": "^22.20.5",
+    "pusher-js": "^8.6.0",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.2",
+    "typescript": "^5.9.3"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
+}
