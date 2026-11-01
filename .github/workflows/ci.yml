@@ -1,0 +1,44 @@
+name: ci
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: ["20", "22", "24"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+      - name: Package contents
+        run: npm pack --dry-run
+
+  # Older Nest majors (Nest 10 still runs on Node 18).
+  nest:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - nest: "10"
+            node: "18"
+          - nest: "11"
+            node: "20"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - run: npm ci
+      - run: npm install --no-save @nestjs/common@${{ matrix.nest }} @nestjs/core@${{ matrix.nest }} @nestjs/platform-express@${{ matrix.nest }} @nestjs/platform-fastify@${{ matrix.nest }} @nestjs/testing@${{ matrix.nest }}
+      - run: npm test
