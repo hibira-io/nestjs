@@ -1,6 +1,6 @@
 {
   "name": "@hibira-io/nestjs",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "NestJS module for Hibira (Pusher-compatible) realtime: publish events, authorize private and presence channels with decorators, receive signed webhooks, @Broadcast() route results, stream LLM text, ask people for approvals and send push notifications",
   "keywords": [
     "nestjs",
