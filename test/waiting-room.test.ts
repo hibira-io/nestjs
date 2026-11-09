@@ -46,28 +46,31 @@ describe('verifyPass', () => {
   });
 });
 
-@Controller()
-class Pages {
-  @Get('drop/:id')
+@Controller('drop')
+class DropPages {
+  @Get(':id')
   drop(@HibiraPass() pass: WaitingRoomPass) {
     return `in #${pass.number}`;
   }
 
-  @Post('drop/:id')
+  @Post(':id')
   buy(@HibiraPass() pass: WaitingRoomPass) {
     return `bought #${pass.number}`;
   }
+}
 
+@Controller()
+class OpenPages {
   @Get('open')
   open() {
     return 'open';
   }
 }
 
-@Module({ imports: [HibiraModule.forRoot({ ...creds, host: 'ws.example.com' })], controllers: [Pages] })
+@Module({ imports: [HibiraModule.forRoot({ ...creds, host: 'ws.example.com' })], controllers: [DropPages, OpenPages] })
 class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(WaitingRoom('presale')).forRoutes('drop/*path');
+    consumer.apply(WaitingRoom('presale')).forRoutes(DropPages);
   }
 }
 
