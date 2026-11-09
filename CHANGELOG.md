@@ -1,7 +1,11 @@
 # Changelog
 
-## Unreleased
+## 0.2.0
 
+- Waiting rooms: `consumer.apply(WaitingRoom('presale')).forRoutes(...)`
+  sends visitors without a pass to the Hibira queue and lets them in with a
+  signed pass kept in an HttpOnly cookie; `@HibiraPass()` reads it.
+  `verifyPass()` and `waitingRoomUrl()` are exported. Express and Fastify.
 - README: cover image and screenshots of the new example app (`npm run example`).
 
 ## 0.1.0

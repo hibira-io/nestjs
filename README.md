@@ -282,6 +282,41 @@ token(@Req() req) {
 
 Also `publishToInterests(interests, payload)` and `deleteUser(userId)`.
 
+## Waiting room
+
+Put a [Hibira waiting room](https://github.com/hibira-io/waiting-room) in front
+of a ticket drop or launch page. Apply the middleware to the routes to protect:
+
+```ts
+import { HibiraPass, WaitingRoom, type WaitingRoomPass } from '@hibira-io/nestjs';
+
+@Module({ imports: [HibiraModule.forRoot()], controllers: [DropController] })
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(WaitingRoom('presale')).forRoutes(DropController);
+  }
+}
+
+@Controller('drop')
+export class DropController {
+  @Get(':id')
+  show(@HibiraPass() pass: WaitingRoomPass) {
+    return { number: pass.number }; // also ticketId, expiresAt
+  }
+}
+```
+
+Visitors without a pass are redirected to the hosted queue page (non-GET
+requests get a `403`). When it's their turn they come back with a signed
+pass, which is checked and kept in an HttpOnly cookie. Works on Express and
+Fastify. `WaitingRoom('presale', { lang: 'ja', previousSecret })` takes
+options; `verifyPass(token, { secret, room })` checks a pass anywhere.
+
+Create the room (rate, start time, `return_urls`) with the
+[waiting rooms API](https://github.com/hibira-io/pusher-server/blob/master/docs/waiting-rooms.md).
+A pass is valid for 30 minutes by default and works in any browser; if each
+queue number may check out once, record `pass.ticketId` and refuse a repeat.
+
 ## Options
 
 | Option | Environment | Default |
@@ -321,3 +356,5 @@ Laravel 的 `routes/channels.php`），模組會提供 pusher-js 與 Laravel Ech
 `hibira.stream()` 串流 LLM 輸出，前端用 @hibira-io/react / vue / nuxt 的
 `useStream()` 顯示；`requestApproval()` 請人核准；`HibiraPushService` 發送推播。
 支援 Nest 10、11、12，Express 與 Fastify。`example/` 有一個可直接執行的即時訂單頁面範例。
+
+等候室（waiting room）：`consumer.apply(WaitingRoom('presale')).forRoutes(DropController)`，沒有 pass 的訪客會被導到 Hibira 託管的排隊頁，輪到時帶著簽名 pass 回來並存成 HttpOnly cookie，用 `@HibiraPass()` 取得號碼（Express 與 Fastify 皆可）。

@@ -35,3 +35,12 @@ export {
   type ResolvedHibiraOptions,
 } from './options';
 export { streamToChannel, textOf, type StreamResult, type StreamSource, type StreamToChannelOptions, type Triggerer } from './stream';
+export {
+  HibiraPass,
+  verifyPass,
+  WaitingRoom,
+  waitingRoomUrl,
+  type VerifyPassOptions,
+  type WaitingRoomOptions,
+  type WaitingRoomPass,
+} from './waiting-room';
