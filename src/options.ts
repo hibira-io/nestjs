@@ -24,6 +24,8 @@ export interface HibiraConnectionOptions {
   encryptionMasterKeyBase64?: string;
   /** Use this `pusher` instance instead of building one from the fields above. */
   pusher?: Pusher;
+  /** Live Chat › Settings › Widget › Verified visitors secret, for `liveChatIdentity()`. Default: `HIBIRA_LIVECHAT_IDENTITY_SECRET`. */
+  liveChatIdentitySecret?: string;
   /** Hibira Push (Beams-compatible): set it to use HibiraPushService. Default: `HIBIRA_PUSH_INSTANCE_ID` + `HIBIRA_PUSH_SECRET_KEY`. */
   push?: HibiraPushOptions | false;
 }
@@ -88,6 +90,7 @@ export interface ResolvedHibiraOptions {
   useTLS: boolean;
   timeout: number;
   encryptionMasterKeyBase64?: string;
+  liveChatIdentitySecret?: string;
   pusher?: Pusher;
   push?: Required<HibiraPushOptions>;
 }
@@ -109,6 +112,7 @@ export function resolveOptions(options: HibiraConnectionOptions = {}): ResolvedH
     useTLS: tls,
     timeout: options.timeout ?? 10_000,
     encryptionMasterKeyBase64: options.encryptionMasterKeyBase64 ?? env('HIBIRA_ENCRYPTION_MASTER_KEY'),
+    liveChatIdentitySecret: options.liveChatIdentitySecret ?? env('HIBIRA_LIVECHAT_IDENTITY_SECRET'),
     pusher: options.pusher,
   };
   if (!resolved.pusher) {

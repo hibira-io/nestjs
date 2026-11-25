@@ -259,6 +259,33 @@ also show the request in the
 [@hibira-io/approvals](https://github.com/hibira-io/approvals) inbox.
 Approvals work for apps in a Hibira account.
 
+## Chat API
+
+Conversations with stored history, read receipts and offline push
+([reference](https://hibira.io/chat-api)). Clients receive `chat.*` events on
+`#server-to-user-<user_id>` after pusher-js `signin()`.
+
+```ts
+await this.hibira.chat.putConversation('order-1042', { name: 'Order #1042', members: ['cust_7', 'agent_2'] });
+await this.hibira.chat.sendMessage('order-1042', 'agent_2', 'Your parcel left the warehouse.');
+const page = await this.hibira.chat.listMessages('order-1042', { after: lastSeq, limit: 50 });
+await this.hibira.chat.markRead('order-1042', 'cust_7', page.last_seq);
+```
+
+Also `getConversation`, `deleteConversation`, `addMembers`, `removeMember`,
+`systemMessage`, `userConversations`, and `chat.request(method, path, params, body)`
+for every other call (typing, reactions, edits, search, moderation). Errors
+throw `HibiraChatError` with `status` and `body`.
+
+## Live Chat verified visitors
+
+Let signed-in users chat as themselves on the [Hibira Live Chat](https://chat.hibira.io)
+widget. Set `liveChatIdentitySecret` (or `HIBIRA_LIVECHAT_IDENTITY_SECRET`) to
+the secret from Live Chat › Settings › Widget › Verified visitors, then hand
+the page `hibira.liveChatIdentity(user)` (`{ id, hash, name, email }`) for
+`data-user-id` / `data-user-hash` on the script tag or `HibiraLiveChat.identify()`.
+`liveChatUserHash(secret, userId)` computes the hash on its own.
+
 ## Push notifications
 
 Turn on Push on the app page, then set `HIBIRA_PUSH_INSTANCE_ID` and
@@ -358,3 +385,5 @@ Laravel 的 `routes/channels.php`），模組會提供 pusher-js 與 Laravel Ech
 支援 Nest 10、11、12，Express 與 Fastify。`example/` 有一個可直接執行的即時訂單頁面範例。
 
 等候室（waiting room）：`consumer.apply(WaitingRoom('presale')).forRoutes(DropController)`，沒有 pass 的訪客會被導到 Hibira 託管的排隊頁，輪到時帶著簽名 pass 回來並存成 HttpOnly cookie，用 `@HibiraPass()` 取得號碼（Express 與 Fastify 皆可）。
+
+Chat API：`hibira.chat` 提供對話、訊息、已讀、離線推播等方法。Live Chat：`hibira.liveChatIdentity(user)` 產生已驗證訪客的簽名，讓登入使用者以本人身分聊天。

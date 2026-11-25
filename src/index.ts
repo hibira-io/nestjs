@@ -44,3 +44,4 @@ export {
   type WaitingRoomOptions,
   type WaitingRoomPass,
 } from './waiting-room';
+export { HibiraChat, HibiraChatError, liveChatUserHash, type ConversationFields, type SendMessageOptions } from './chat';
