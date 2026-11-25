@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Chat API: `hibira.chat` (`putConversation`, `getConversation`, `deleteConversation`, `addMembers`, `removeMember`, `sendMessage`, `listMessages`, `markRead`, `systemMessage`, `userConversations`, `request`), `HibiraChatError`.
+- Live Chat verified visitors: `hibira.liveChatIdentity(user)` with the `liveChatIdentitySecret` option (`HIBIRA_LIVECHAT_IDENTITY_SECRET`), and `liveChatUserHash()`.
+
 ## 0.2.0
 
 - Waiting rooms: `consumer.apply(WaitingRoom('presale')).forRoutes(...)`

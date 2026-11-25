@@ -3,6 +3,7 @@ import { createHmac, timingSafeEqual } from 'node:crypto';
 import Pusher from 'pusher';
 
 import { HIBIRA_OPTIONS, HIBIRA_PUSHER, type ResolvedHibiraOptions } from './options';
+import { HibiraChat, liveChatUserHash } from './chat';
 import { streamToChannel, type StreamResult, type StreamSource, type StreamToChannelOptions } from './stream';
 
 export interface TriggerOptions {
@@ -97,11 +98,31 @@ export class HibiraService {
   /** The underlying `pusher` client, for anything not wrapped here. */
   readonly pusher: Pusher;
 
+  /** The Chat API: conversations with stored history (https://hibira.io/chat-api). */
+  readonly chat: HibiraChat;
+
   constructor(
     @Inject(HIBIRA_OPTIONS) private readonly options: ResolvedHibiraOptions,
     @Inject(HIBIRA_PUSHER) pusher: Pusher,
   ) {
     this.pusher = pusher;
+    this.chat = new HibiraChat(options);
+  }
+
+  /**
+   * Live Chat verified visitor fields for a signed-in user, for the widget's
+   * `data-user-id` / `data-user-hash` (or `HibiraLiveChat.identify()`).
+   * Null without `liveChatIdentitySecret` (`HIBIRA_LIVECHAT_IDENTITY_SECRET`).
+   */
+  liveChatIdentity(user: { id: string | number; name?: string; email?: string }): { id: string; hash: string; name?: string; email?: string } | null {
+    const secret = this.options.liveChatIdentitySecret;
+    if (!secret || user.id === undefined || user.id === null || String(user.id) === '') return null;
+    return {
+      id: String(user.id),
+      hash: liveChatUserHash(secret, user.id),
+      ...(user.name ? { name: user.name } : {}),
+      ...(user.email ? { email: user.email } : {}),
+    };
   }
 
   /** The public app key, for the browser (pusher-js / Laravel Echo). */
